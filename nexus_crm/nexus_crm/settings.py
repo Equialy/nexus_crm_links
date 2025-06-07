@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     "crm.apps.CrmConfig",
+    "users.apps.UsersConfig",
     'rest_framework',
 ]
 
