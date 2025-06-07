@@ -9,7 +9,7 @@ from users.manager import MyUserManager
 # Create your models here.
 
 class UserProfile(AbstractBaseUser):
-
+    username = models.CharField(max_length=50, verbose_name="username", null=True, blank=False, unique=True)
     telegram_id = models.CharField(max_length=15, verbose_name="telegram",
                                    blank=True, null=True,
                                    default=None, unique=True)
@@ -33,6 +33,9 @@ class UserProfile(AbstractBaseUser):
         return f"Профиль пользователя {self.user.username}"
 
     objects = MyUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     class Meta:
         db_table = "user_profile"
