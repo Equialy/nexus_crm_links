@@ -38,7 +38,7 @@ class LoginUser(LoginView):
         return super().form_valid(form)
 
 class ProfileUser(LoginRequiredMixin, UpdateView):
-    model = get_user_model()
+    model = UserProfile
     form_class = ProfileUserForm
     template_name = 'profile.html'
 
