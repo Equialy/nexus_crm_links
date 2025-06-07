@@ -4,6 +4,8 @@ from django.contrib.auth.forms import UsernameField, AuthenticationForm
 from django.contrib.auth.password_validation import password_validators_help_text_html, validate_password
 from django.utils.translation import gettext_lazy as _
 
+from users.models import UserProfile
+
 
 class SignUpForm(forms.ModelForm):
 
@@ -35,8 +37,8 @@ class SignUpForm(forms.ModelForm):
         help_text=_("Enter the same password as before, for verification."),
     )
     class Meta:
-        model = get_user_model()
-        fields = ['username', 'email']
+        model = UserProfile
+        fields = ['username', 'email', 'phone_number']
 
     def clean_password2(self):
         """
@@ -46,7 +48,7 @@ class SignUpForm(forms.ModelForm):
         password2 = self.cleaned_data.get('password2')
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError(_("Passwords do not match."))
-        validate_password(password1)  # Проверяем пароль на соответствие политикам
+        validate_password(password1)
         return password2
 
     def save(self, commit=True):
