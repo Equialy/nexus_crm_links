@@ -1,0 +1,14 @@
+[project]
+name = "my_crm"
+version = "0.1.0"
+dependencies = [
+    "django~=5.1",
+    "djangorestframework~=3.16",
+    "celery~=5.4",
+    "redis~=5.1",
+    "django-celery-beat~=2.7",
+    "aiohttp~=3.9",
+    "python-dotenv~=1.0",
+    "pytest-asyncio>=1.0.0",
+    "httpx>=0.28.1",
+]
