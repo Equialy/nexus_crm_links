@@ -4,6 +4,7 @@ from django.views import View
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 
+from clients.forms import ClientForm
 from orders.forms import OrderForm
 from orders.models import Orders
 
@@ -39,18 +40,21 @@ class DashBoardAddOrderView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         form = OrderForm()
-        return render(request, self.template_name, {'form': form, 'title': 'Новая заявка'})
+        client_form = ClientForm(request.POST)
 
+        return render(request, self.template_name, {'form': form,"client_form": client_form, 'title': 'Новая заявка'})
 
     def post(self, request, *args, **kwargs):
         # Предположим, что вы получаете эти поля из request.POST
         form = OrderForm(request.POST)
+        client_form = ClientForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
             order.manager = request.user
             order.save()
             return redirect('orders:dashboard')
-        return render(request, self.template_name, {'form': form, "title": "Новая заявка"})
+        return render(request, self.template_name, {'form': form, "client_form":client_form,  "title": "Новая заявка"})
+
 
 class DashboardDeleteView(LoginRequiredMixin, View):
     model = Orders

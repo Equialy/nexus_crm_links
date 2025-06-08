@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("users.urls", namespace="users")),
     path('crm/', include("orders.urls", namespace="orders")),
+    path('crm/', include("clients.urls", namespace="clients")),
 ]
 
 if settings.DEBUG:
