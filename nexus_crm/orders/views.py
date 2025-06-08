@@ -6,7 +6,7 @@ from django.views.generic import TemplateView, DetailView, UpdateView, DeleteVie
 from django.urls import reverse_lazy, reverse
 
 from clients.forms import ClientForm
-from orders.forms import OrderForm, ServiceForm, OrderFileForm
+from orders.forms import OrderForm, ServiceForm, OrderFileForm, OrderAddressForm
 from orders.models import Orders, OrderFile
 
 
@@ -32,6 +32,7 @@ class DashBoardAddOrderView(LoginRequiredMixin, View):
     success_url = reverse_lazy('orders:dashboard')
 
     def get(self, request, *args, **kwargs):
+        """Возвращает формы добавления клиента и сервиса для ajax запроса"""
         form = OrderForm()
         client_form = ClientForm()
         service_form = ServiceForm()
@@ -41,6 +42,7 @@ class DashBoardAddOrderView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         # Предположим, что вы получаете эти поля из request.POST
+        """Созраняет данные клиента и сервиса при отправке их через ajax"""
         form = OrderForm(request.POST)
         client_form = ClientForm(request.POST)
         service_form = ServiceForm(request.POST)
@@ -49,10 +51,12 @@ class DashBoardAddOrderView(LoginRequiredMixin, View):
             order = form.save(commit=False)
             order.manager = request.user
             order.save()
-            return redirect('orders:order_card', pk=order.pk) # При нажатии сохранить перенаправляет на следующую страницу сарточки заявки
+            return redirect('orders:order_card',
+                            pk=order.pk)  # При нажатии сохранить перенаправляет на следующую страницу сарточки заявки
 
         return render(request, self.template_name,
-                      {'form': form, "client_form": client_form, "service_form": service_form, "title": "Новая заявка"})
+                      {'form': form, "client_form": client_form,
+                       "service_form": service_form, "title": "Новая заявка"})
 
 
 class DashboardDeleteView(LoginRequiredMixin, View):
@@ -69,6 +73,7 @@ class DashboardDeleteView(LoginRequiredMixin, View):
 
 
 class ServiceAddView(LoginRequiredMixin, View):
+    """Добавляет сервис в таблицу service"""
     def post(self, request):
         form = ServiceForm(request.POST)
         if form.is_valid():
@@ -78,13 +83,20 @@ class ServiceAddView(LoginRequiredMixin, View):
 
 
 class OrderDetailCartView(LoginRequiredMixin, DetailView):
-         model = Orders
-         template_name = "orders/order_card.html"
-         context_object_name = 'order'
+    model = Orders
+    template_name = "orders/order_card.html"
+    context_object_name = 'order'
+
+    def get_context_data(self, **kwargs):
+        """Возвращает форму изменения адреся на странице карточи заявки"""
+        context = super().get_context_data(**kwargs)
+        context['address_form'] = OrderAddressForm(instance=self.object)
+        return context
 
 
 class DashBoardOrdersView(TemplateView):
     pass
+
 
 class DashBoardTasksView(TemplateView):
     pass
@@ -114,8 +126,6 @@ class UpdateOrderCostsView(LoginRequiredMixin, View):
         return redirect('orders:order_card', pk=order.pk)
 
 
-
-
 class EditOrderView(LoginRequiredMixin, UpdateView):
     model = Orders
     form_class = OrderForm
@@ -123,6 +133,7 @@ class EditOrderView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('orders:order_card', kwargs={'pk': self.object.pk})
+
 
 class OrderFilesView(LoginRequiredMixin, DetailView):
     model = Orders
@@ -144,6 +155,7 @@ class OrderFilesView(LoginRequiredMixin, DetailView):
             file_obj.save()
         return redirect('orders:order_files', pk=self.object.pk)
 
+
 class OrderFileDeleteView(LoginRequiredMixin, DeleteView):
     model = OrderFile
     http_method_names = ['post']
@@ -151,3 +163,15 @@ class OrderFileDeleteView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         order_pk = self.object.order.pk
         return reverse('orders:order_files', kwargs={'pk': order_pk})
+
+
+class EditOrderAddressView(LoginRequiredMixin, View):
+    """Изменияет адрес в таблице orders при нажаитии в ajax запросе сохранить"""
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        order = get_object_or_404(Orders, pk=pk)
+        form = OrderAddressForm(request.POST, instance=order)
+        if form.is_valid():
+            order = form.save()
+            return redirect('orders:order_card', pk=order.pk)
+

@@ -53,3 +53,11 @@ class OrderFileForm(forms.ModelForm):
     class Meta:
         model = OrderFile
         fields = ['file']
+
+class OrderAddressForm(forms.ModelForm):
+    class Meta:
+        model = Orders
+        fields = ['address']
+        widgets = {
+            'address': forms.TextInput(attrs={'class': 'form-control'}),
+        }
