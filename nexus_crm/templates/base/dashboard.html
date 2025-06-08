@@ -33,10 +33,10 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ request.client.name }}</td>
-                    <td>{{ request.service.name }}</td>
+                    <td>{{ request.service.title }}</td>
                     <td>{{ request.get_status_display }}</td>
-                    <td>{{ request.total_cost }} &mdash; {{ request.currency }}</td>
-                    <td>{{ request.created|date:"d.m.Y H:i" }}</td>
+                    <td>{{ request.cost_price }} &mdash; {{ request.total_price }}</td>
+                    <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
                 </tr>
                 {% empty %}
                 <tr>
