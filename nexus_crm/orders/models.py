@@ -15,6 +15,7 @@ class Orders(models.Model):
     ]
     # TODO сделать отношение к таблице клиента
 
+
     address = models.TextField(verbose_name="Адрес", blank=True)
     description = models.TextField(verbose_name="Описание заявки")
     cost_price = models.IntegerField(verbose_name="Себестоимость услуги",
@@ -30,10 +31,10 @@ class Orders(models.Model):
                                 on_delete=models.SET_NULL,
                                 related_name="service_requests",
                                 null=True, blank=True)
-    # service = models.ForeignKey(to="Service",
-    #                             on_delete=models.SET_NULL,
-    #                             related_name="service_requests",
-    #                             null=True, blank=True)
+    service = models.ForeignKey(to="Service",
+                                on_delete=models.SET_NULL,
+                                related_name="service_requests",
+                                null=True, blank=True)
     status = models.CharField(choices=STATUS_CHOICES, default='in_progress', max_length=15)
     created_at = models.DateTimeField(auto_now_add=True,
                                       verbose_name="Дата создания")
@@ -62,3 +63,18 @@ class Orders(models.Model):
             ),
             "-updated_at"
         ]
+
+
+class Service(models.Model):
+    """
+    Услуга для заявки
+    """
+    title = models.CharField(max_length=350, verbose_name="Услуга")
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = "services"
+        verbose_name = "Услуга"
+        verbose_name_plural = "Услуги"
