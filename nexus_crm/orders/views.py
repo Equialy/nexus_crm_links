@@ -50,5 +50,5 @@ class DashBoardAddOrderView(LoginRequiredMixin, View):
             order.manager = request.user
             order.save()
             return redirect('orders:dashboard')
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, "title": "Новая заявка"})
 

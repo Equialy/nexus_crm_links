@@ -1,8 +1,13 @@
 from django import forms
-from .models import Orders
+from .models import Orders, Service
 
 
 class OrderForm(forms.ModelForm):
+    service = forms.ModelChoiceField(
+        label='Услуга',
+        queryset=Service.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
     class Meta:
         model = Orders
         fields = [  "service", 'address', 'description', 'cost_price', 'total_price']
@@ -31,3 +36,5 @@ class OrderForm(forms.ModelForm):
         if total is not None and cost is not None and total < cost:
             raise forms.ValidationError('Общая стоимость не может быть меньше себестоимости.')
         return total
+
+
