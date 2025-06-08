@@ -8,15 +8,80 @@
     <form method="post" action="{% url 'orders:new_order' %}" novalidate>
         {% csrf_token %}
         {{ form.non_field_errors }}
+
         {% for field in form %}
         <div class="mb-3">
-            {{ field.label_tag }}
-            {{ field }}
+            <label>{{ field.label_tag }}</label>
+            <div class="d-flex align-items-center gap-2">
+                {{ field }}
+                {% if field.name == 'client' %}
+                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addClientModal">
+                    +
+                </button>
+                {% endif %}
+            </div>
             {{ field.errors }}
         </div>
         {% endfor %}
+
         <button type="submit" class="btn btn-primary">Сохранить</button>
     </form>
 </div>
+
+
+
+<!-- Модальное окно для добавления клиента -->
+<div class="modal fade" id="addClientModal" tabindex="-1" aria-labelledby="addClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'clients:add_client_ajax' %}" id="add-client-form">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="addClientModalLabel">Новый клиент</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          {% for field in client_form %}
+          <div class="mb-3">
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+          </div>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Сохранить</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('add-client-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const form = event.target;
+    const data = new FormData(form);
+    const response = await fetch(form.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': data.get('csrfmiddlewaretoken'),
+        },
+        body: data
+    });
+
+    if (response.ok) {
+        const client = await response.json();
+        const clientSelect = document.getElementById("id_client");
+        const newOption = new Option(client.name, client.id, true, true);
+        clientSelect.add(newOption, undefined);
+        bootstrap.Modal.getInstance(document.getElementById('addClientModal')).hide();
+        form.reset();
+    } else {
+        alert("Ошибка при добавлении клиента");
+    }
+});
+</script>
 
 {% endblock %}
