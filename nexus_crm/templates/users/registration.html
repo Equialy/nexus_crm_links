@@ -1,0 +1,124 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+  <!-- Section: Design Block -->
+<section class="text-center text-lg-start">
+  <style>
+    .cascading-right {
+      margin-right: -50px;
+    }
+
+    @media (max-width: 991.98px) {
+      .cascading-right {
+        margin-right: 0;
+      }
+    }
+  </style>
+
+  <!-- Jumbotron -->
+  <div class="container py-4">
+    <div class="row g-0 align-items-center">
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <div class="card cascading-right bg-body-tertiary" style="
+            backdrop-filter: blur(30px);
+            ">
+          <div class="card-body p-5 shadow-5 text-center">
+            <h2 class="fw-bold mb-5">Sign up now</h2>
+            <div class="text-center">
+                <h1>Nexus Service Link</h1>
+                <p>Пожалуйста <a href="{% url 'users:login' %}">войдите</a> для доступа к файлам.</p>
+            </div>
+            <form method="post">
+              <!-- 2 column grid layout with text inputs for the first and last names -->
+
+                        {% csrf_token %}
+              {% if form.errors %}
+                <div class="alert alert-danger">
+                    {% for field, errors in form.errors.items %}
+                        {{ errors }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+
+              <div class="row">
+                <div class="col-md-6 mb-4">
+                  <div data-mdb-input-init class="form-outline">
+                    <label class="form-label" for="id_username">{{ form.username.label }}</label>
+                      {{ form.username }}
+                    {% if form.username.help_text %}
+                        <div class="form-text">{{ form.username.help_text }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                    <!-- Email input -->
+                <div class="col-md-6 mb-4">
+                  <div data-mdb-input-init class="form-outline">
+                    <label class="form-label" for="id_email">{{ form.email.label }}</label>
+                {{ form.email }}
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- Password input -->
+              <div class="mb-4">
+                <label class="form-label" for="id_password1">{{ form.password1.label }}</label>
+                {{ form.password1 }}
+                {% if form.password1.help_text %}
+                    <div class="form-text">{{ form.password1.help_text }}</div>
+                {% endif %}
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label" for="id_password2">{{ form.password2.label }}</label>
+                {{ form.password2 }}
+                {% if form.password2.help_text %}
+                    <div class="form-text">{{ form.password2.help_text }}</div>
+                {% endif %}
+               </div>
+
+
+              <!-- Submit button -->
+              <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">
+                Регистрация
+              </button>
+
+              <!-- Register buttons -->
+              <div class="text-center">
+<!--                <p>or sign up with:</p>-->
+                <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                  <i class="fab fa-facebook-f"></i>
+                </button>
+
+                <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                  <i class="fab fa-google"></i>
+                </button>
+
+                <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                  <i class="fab fa-twitter"></i>
+                </button>
+
+                <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                  <i class="fab fa-github"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <img src="https://mdbootstrap.com/img/new/ecommerce/vertical/004.jpg" class="w-100 rounded-4 shadow-4"
+          alt="" />
+      </div>
+    </div>
+  </div>
+  <!-- Jumbotron -->
+</section>
+<!-- Section: Design Block -->
+
+
+{% endblock%}
