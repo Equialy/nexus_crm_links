@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import RegexValidator
 
 from users.models import UserProfile
 
@@ -7,9 +8,12 @@ from users.models import UserProfile
 class Clients(models.Model):
     name = models.CharField(max_length=255,
                             verbose_name="ФИО Клиента")
-    phone = models.CharField(max_length=16,
-                             verbose_name="Телефон")
-    phone_2 = models.CharField(max_length=16,
+    phone_regex = RegexValidator(regex=r'^((\+7)|8)\d{10}$',
+                                 message="Phone number must be entered in the format: '+79999999999' or '89999999999'.")
+    phone = models.CharField(validators=[phone_regex], max_length=16,
+                             verbose_name="Телефон", )
+
+    phone_2 = models.CharField(validators=[phone_regex], max_length=16,
                                verbose_name="Второй телефон",
                                blank=True)
     telegram = models.CharField(max_length=55,
