@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "crm.apps.CrmConfig",
     "orders.apps.OrdersConfig",
     "users.apps.UsersConfig",
+    "clients.apps.ClientsConfig",
     'rest_framework',
 ]
 
