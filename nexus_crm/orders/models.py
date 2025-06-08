@@ -45,12 +45,21 @@ class Orders(models.Model):
                                       verbose_name="Дата и время изменения")
 
     objects = OrdersManager()
-    #
-    # def __str__(self):
-    #     return f"Заявка №{self.pk} для клиента {self.client.name}."
+
+
+
+    def __str__(self):
+        return f"Заявка №{self.pk} для клиента {self.client.name}."
 
     def get_absolute_url(self):
         return reverse("crm:service_request_detail", args=[self.pk])
+
+    @property
+    def profit(self):
+        """Рассчитывает прибыль по заявке"""
+        total = self.total_price or 0
+        cost = self.cost_price or 0
+        return total - cost
 
     class Meta:
         db_table = "orders"
@@ -67,6 +76,23 @@ class Orders(models.Model):
             "-updated_at"
         ]
 
+
+class OrderFile(models.Model):
+    order = models.ForeignKey(
+        Orders,
+        related_name='files',
+        on_delete=models.CASCADE
+    )
+    file = models.FileField(upload_to='order_files/', verbose_name="Документ")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата загрузки")
+
+    def __str__(self):
+        return f"File for order {self.order.id}: {self.file.name}"
+
+    class Meta:
+        db_table = "order_files"
+        verbose_name = "Файл"
+        verbose_name_plural = "Файлы"
 
 class Service(models.Model):
     """

@@ -13,4 +13,12 @@ urlpatterns = [
     path('delete/<int:pk>', views.DashboardDeleteView.as_view(), name='delete_order' ),
     path('add_service_ajax/', views.ServiceAddView.as_view(), name='add_service_ajax'),
 
+    path('order_card/<int:pk>/', views.OrderDetailCartView.as_view(), name='order_card'),
+    path('order/<int:pk>/update_costs/', views.UpdateOrderCostsView.as_view(), name='update_order_costs'),
+    path('order/<int:pk>/files/', views.OrderFilesView.as_view(), name='order_files'),
+    path('order/<int:pk>/edit/', views.EditOrderView.as_view(), name='edit_order'),
+
+    path('order/<int:pk>/files/', views.OrderFilesView.as_view(), name='order_files'),
+    path('order/<int:order_pk>/files/delete/<int:pk>/', views.OrderFileDeleteView.as_view(), name='order_file_delete'),
+
 ]
