@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.db.models import When, Case, Value, IntegerField
 
+from clients.models import Clients
 from orders.manager import OrdersManager
 from users.models import UserProfile
 
@@ -13,7 +14,8 @@ class Orders(models.Model):
         ('completed', 'Завершена'),
         ('canceled', 'Отменена'),
     ]
-    # TODO сделать отношение к таблице клиента
+    client = models.ForeignKey(Clients, on_delete=models.CASCADE,
+                               verbose_name="Клиент", related_name="orders_requests" ,null=True)
 
 
     address = models.TextField(verbose_name="Адрес", blank=True)
@@ -29,11 +31,11 @@ class Orders(models.Model):
                                               default=0)
     manager = models.ForeignKey(to=UserProfile,
                                 on_delete=models.SET_NULL,
-                                related_name="service_requests",
+                                related_name="orders_requests",
                                 null=True, blank=True)
     service = models.ForeignKey(to="Service",
                                 on_delete=models.SET_NULL,
-                                related_name="service_requests",
+                                related_name="orders_requests",
                                 null=True, blank=True)
     status = models.CharField(choices=STATUS_CHOICES, default='in_progress', max_length=15)
     created_at = models.DateTimeField(auto_now_add=True,

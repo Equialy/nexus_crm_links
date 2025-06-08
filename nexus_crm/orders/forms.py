@@ -10,7 +10,7 @@ class OrderForm(forms.ModelForm):
     )
     class Meta:
         model = Orders
-        fields = [  "service", 'address', 'description', 'cost_price', 'total_price']
+        fields = [  "service", "client", 'address', 'description', 'cost_price', 'total_price']
         widgets = {
             'service': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
