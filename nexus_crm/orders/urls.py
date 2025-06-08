@@ -10,5 +10,6 @@ urlpatterns = [
     path('order/', views.DashBoardOrdersView.as_view(), name='order' ),
     path('tasks/', views.DashBoardTasksView.as_view(), name='tasks' ),
     path('new_order/', views.DashBoardAddOrderView.as_view(), name='new_order' ),
+    path('delete/<int:pk>', views.DashboardDeleteView.as_view(), name='delete_order' ),
 
 ]

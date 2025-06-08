@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
@@ -52,3 +52,14 @@ class DashBoardAddOrderView(LoginRequiredMixin, View):
             return redirect('orders:dashboard')
         return render(request, self.template_name, {'form': form, "title": "Новая заявка"})
 
+class DashboardDeleteView(LoginRequiredMixin, View):
+    model = Orders
+    success_url = reverse_lazy('orders:dashboard')
+
+    def post(self, request, pk):
+        order = get_object_or_404(Orders, pk=pk)
+        # Удаление только своих заявок (если нужно)
+        if order.manager == request.user:
+            order.delete()
+
+        return redirect('orders:dashboard')
