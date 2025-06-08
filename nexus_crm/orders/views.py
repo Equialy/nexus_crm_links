@@ -4,6 +4,7 @@ from django.views import View
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 
+from orders.forms import OrderForm
 from orders.models import Orders
 
 
@@ -37,25 +38,17 @@ class DashBoardAddOrderView(LoginRequiredMixin, View):
     success_url = reverse_lazy('orders:dashboard')
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, { 'title': 'Новая заявка'})
+        form = OrderForm()
+        return render(request, self.template_name, {'form': form, 'title': 'Новая заявка'})
 
 
     def post(self, request, *args, **kwargs):
         # Предположим, что вы получаете эти поля из request.POST
-        description = request.POST['description']
-        address = request.POST.get('address', '')
-        cost_price = int(request.POST.get('cost_price', 0))
-        total_price = int(request.POST.get('total_price', 0))
-
-        # Создаём заявку через менеджер
-        new_order = Orders.objects.create_order(
-            manager=request.user,
-            address=address,
-            description=description,
-            cost_price=cost_price,
-            total_price=total_price
-        )
-
-        # После создания — редиректим на дашборд или детальную страницу
-        return redirect('orders:dashboard')
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.manager = request.user
+            order.save()
+            return redirect('orders:dashboard')
+        return render(request, self.template_name, {'form': form})
 
