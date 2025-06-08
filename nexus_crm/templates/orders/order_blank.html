@@ -3,6 +3,8 @@
 {% block title %} Создание заявки {% endblock %}
 
 {% block content %}
+ <div class="container" >
+    <div class="page-wrapper" >
 <div class="container mt-4">
     <h2>Новая заявка</h2>
     <form method="post" action="{% url 'orders:new_order' %}" novalidate>
@@ -34,7 +36,8 @@
 
 {% include 'includes/client_add_form.html' with item=item active_path=active_path %}
 {% include 'includes/service_add_form.html' with item=item active_path=active_path %}
-
+                    </div>
+  </div>
 
 <script src="{% static 'crm/js/forms_add.js' %}"></script>
 

@@ -3,56 +3,60 @@
 
 
 {% block content %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Панель управления</h2>
-        <span class="badge bg-primary fs-5">Менеджер {{ user.username }}</span>
-    </div>
 
-    <div class="mb-4">
-        <a href="#" class="btn btn-outline-primary me-2">Мои заявки</a>
-        <a href="#" class="btn btn-outline-secondary me-2">Мои задачи</a>
-        <a href="{% url 'orders:new_order' %}" class="btn btn-primary">Новая заявка</a>
-    </div>
+<div class="container" >
+<div class="page-wrapper" >
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Панель управления</h2>
+            <span class="badge bg-primary fs-5">Менеджер {{ user.username }}</span>
+        </div>
+        <div class="mb-4">
+            <a href="#" class="btn btn-outline-primary me-2">Мои заявки</a>
+            <a href="#" class="btn btn-outline-secondary me-2">Мои задачи</a>
+            <a href="{% url 'orders:new_order' %}" class="btn btn-primary">Новая заявка</a>
+        </div>
 
-    <h4>Активные заявки</h4>
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Клиент</th>
-                    <th>Услуга</th>
-                    <th>Статус</th>
-                    <th>Стоимость</th>
-                    <th>Дата создания</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for request in active_requests %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ request.client.name }}</td>
-                    <td>{{ request.service.title }}</td>
-                    <td>{{ request.get_status_display }}</td>
-                    <td>Себестоимость: {{ request.cost_price }} &mdash; Полная сумма: {{ request.total_price }}</td>
-                    <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
-                    <td>
-                        <form method="post" action="{% url 'orders:delete_order' request.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить заявку?')">
-                                Удалить
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center">Нет активных заявок</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <h4>Активные заявки</h4>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Клиент</th>
+                        <th>Услуга</th>
+                        <th>Статус</th>
+                        <th>Стоимость</th>
+                        <th>Дата создания</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in active_requests %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ request.client.name }}</td>
+                        <td>{{ request.service.title }}</td>
+                        <td>{{ request.get_status_display }}</td>
+                        <td>Себестоимость: {{ request.cost_price }} &mdash; Полная сумма: {{ request.total_price }}</td>
+                        <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
+                        <td>
+                            <form method="post" action="{% url 'orders:delete_order' request.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить заявку?')">
+                                    Удалить
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">Нет активных заявок</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
 </div>
 {% endblock %}
