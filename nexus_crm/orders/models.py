@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.db.models import When, Case, Value, IntegerField
 
+from orders.manager import OrdersManager
 from users.models import UserProfile
 
 
@@ -38,6 +39,8 @@ class Orders(models.Model):
                                       verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True,
                                       verbose_name="Дата и время изменения")
+
+    objects = OrdersManager()
     #
     # def __str__(self):
     #     return f"Заявка №{self.pk} для клиента {self.client.name}."
@@ -46,6 +49,7 @@ class Orders(models.Model):
         return reverse("crm:service_request_detail", args=[self.pk])
 
     class Meta:
+        db_table = "orders"
         verbose_name = "Заявка"
         verbose_name_plural = "Заявки"
         ordering = [
