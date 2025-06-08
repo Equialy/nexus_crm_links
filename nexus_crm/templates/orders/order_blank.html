@@ -1,0 +1,26 @@
+{% extends "base/base.html" %}
+
+{% block title %} Создание заявки {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Новая заявка</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_service" class="form-label">Услуга</label>
+
+        </div>
+        <div class="mb-3">
+            <label for="id_client" class="form-label">Клиент</label>
+
+        </div>
+        <div class="mb-3">
+            <label for="id_description" class="form-label">Описание заявки</label>
+
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+</div>
+
+{% endblock %}

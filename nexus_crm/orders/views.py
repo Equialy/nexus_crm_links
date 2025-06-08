@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import TemplateView
+from django.urls import reverse_lazy
 
 from orders.models import Orders
 
@@ -31,7 +32,14 @@ class DashBoardTasksView(LoginRequiredMixin, View):
 
 
 class DashBoardAddOrderView(LoginRequiredMixin, View):
-    # {% url 'tasks:my_tasks' %}
+    # {% url 'tasks:my_tasks' %}\
+    template_name = 'orders/order_blank.html'
+    success_url = reverse_lazy('orders:dashboard')
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, { 'title': 'Новая заявка'})
+
+
     def post(self, request, *args, **kwargs):
         # Предположим, что вы получаете эти поля из request.POST
         description = request.POST['description']
