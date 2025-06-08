@@ -149,6 +149,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Login setiings
 LOGOUT_REDIRECT_URL = 'users:index'
 AUTH_USER_MODEL = 'users.UserProfile'
+LOGIN_URL = 'users:login'
 
 # Celery
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
