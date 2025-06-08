@@ -30,7 +30,7 @@ class UserProfile(AbstractBaseUser):
     day_off_notification = models.BooleanField(default=False, verbose_name="Оповещения по выходным")
 
     def __str__(self):
-        return f"Профиль пользователя {self.user.username}"
+        return f"Профиль пользователя {self.username}"
 
     objects = MyUserManager()
 
