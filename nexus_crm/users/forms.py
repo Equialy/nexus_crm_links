@@ -12,9 +12,6 @@ class SignUpForm(forms.ModelForm):
     username = forms.CharField(
         label=_("Имя пользователя"),
         max_length=150,
-        help_text=_(
-            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
-        ),
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
@@ -26,7 +23,7 @@ class SignUpForm(forms.ModelForm):
         label=_("Password"),
         strip=False,
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
-        help_text=password_validators_help_text_html(),
+        help_text=_("Пароль должен содержать минимум 4 символа")
 
     )
 
@@ -66,16 +63,16 @@ class LoginUserForm(AuthenticationForm):
     username = forms.CharField(
         label=_("Email"),
         max_length=150,
-        help_text=_(
-            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
-        ),
+        # help_text=_(
+        #     "Letters, digits and @/./+/-/_ only."
+        # ),
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     password = forms.CharField(
         label=_("Password"),
         strip=False,
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
-        help_text=password_validators_help_text_html(),
+        help_text=_("Пароль должен содержать минимум 4 символа")
 
     )
 
