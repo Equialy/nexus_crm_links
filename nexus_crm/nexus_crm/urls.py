@@ -7,6 +7,7 @@ from nexus_crm import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("users.urls", namespace="users")),
+    path('crm/', include("orders.urls", namespace="orders")),
 ]
 
 if settings.DEBUG:
