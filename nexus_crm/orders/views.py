@@ -1,11 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 
 from clients.forms import ClientForm
-from orders.forms import OrderForm
+from orders.forms import OrderForm, ServiceForm
 from orders.models import Orders
 
 
@@ -40,20 +41,25 @@ class DashBoardAddOrderView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         form = OrderForm()
-        client_form = ClientForm(request.POST)
+        client_form = ClientForm()
+        service_form = ServiceForm()
 
-        return render(request, self.template_name, {'form': form,"client_form": client_form, 'title': 'Новая заявка'})
+        return render(request, self.template_name,
+                      {'form': form, "client_form": client_form, "service_form": service_form, 'title': 'Новая заявка'})
 
     def post(self, request, *args, **kwargs):
         # Предположим, что вы получаете эти поля из request.POST
         form = OrderForm(request.POST)
         client_form = ClientForm(request.POST)
+        service_form = ServiceForm(request.POST)
+
         if form.is_valid():
             order = form.save(commit=False)
             order.manager = request.user
             order.save()
             return redirect('orders:dashboard')
-        return render(request, self.template_name, {'form': form, "client_form":client_form,  "title": "Новая заявка"})
+        return render(request, self.template_name,
+                      {'form': form, "client_form": client_form, "service_form": service_form, "title": "Новая заявка"})
 
 
 class DashboardDeleteView(LoginRequiredMixin, View):
@@ -67,3 +73,11 @@ class DashboardDeleteView(LoginRequiredMixin, View):
             order.delete()
 
         return redirect('orders:dashboard')
+
+class ServiceAddView(LoginRequiredMixin, View):
+    def post(self, request):
+        form = ServiceForm(request.POST)
+        if form.is_valid():
+            service = form.save()
+            return JsonResponse({"id": service.id, "title": service.title})
+        return JsonResponse({"errors": form.errors}, status=400)

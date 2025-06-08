@@ -38,3 +38,13 @@ class OrderForm(forms.ModelForm):
         return total
 
 
+
+
+
+class ServiceForm(forms.ModelForm):
+    class Meta:
+        model = Service
+        fields = ["title"]
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+        }

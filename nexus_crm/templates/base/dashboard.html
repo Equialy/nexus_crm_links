@@ -35,7 +35,7 @@
                     <td>{{ request.client.name }}</td>
                     <td>{{ request.service.title }}</td>
                     <td>{{ request.get_status_display }}</td>
-                    <td>{{ request.cost_price }} &mdash; {{ request.total_price }}</td>
+                    <td>Себестоимость: {{ request.cost_price }} &mdash; Полная сумма: {{ request.total_price }}</td>
                     <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
                     <td>
                         <form method="post" action="{% url 'orders:delete_order' request.id %}" style="display:inline;">
