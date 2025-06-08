@@ -13,7 +13,8 @@ class IndexView(TemplateView):
     template_name = "base/base.html"
     extra_context = {'title': 'Главная страница'}
 
-class SignUpUser( CreateView):
+
+class SignUpUser(CreateView):
     model = UserProfile
     form_class = SignUpForm
     success_url = reverse_lazy('users:index')
@@ -27,21 +28,27 @@ class SignUpUser( CreateView):
         login(self.request, user)  # Автоматический вход
         return redirect(self.get_success_url())
 
+
 class LoginUser(LoginView):
     form_class = LoginUserForm
     template_name = 'users/login.html'
-    success_url = reverse_lazy("users:index")
     extra_context = {'title': 'Авторизация'}
+
+    def get_success_url(self):
+        url = self.get_redirect_url()
+        if url:
+            return url
+        return reverse_lazy("orders:dashboard")
 
     def form_valid(self, form):
         print("Форма валидна! Пользователь аутентифицирован.")
         return super().form_valid(form)
 
+
 class ProfileUser(LoginRequiredMixin, UpdateView):
     model = UserProfile
     form_class = ProfileUserForm
     template_name = 'profile.html'
-
 
     def get_success_url(self):
         return reverse_lazy('users:profile')

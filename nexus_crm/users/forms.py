@@ -64,7 +64,7 @@ class SignUpForm(forms.ModelForm):
 
 class LoginUserForm(AuthenticationForm):
     username = forms.CharField(
-        label=_("Имя пользователя"),
+        label=_("Email"),
         max_length=150,
         help_text=_(
             "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
@@ -80,7 +80,7 @@ class LoginUserForm(AuthenticationForm):
     )
 
     class Meta:
-        model = get_user_model()
+        model = UserProfile
         fields = ['username', 'password']
 
 
@@ -94,8 +94,9 @@ class ProfileUserForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
+
     email = forms.EmailField(label=_("Email address"),
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
     class Meta:
-        model = get_user_model()
-        fields = ['username', 'email',   'first_name', 'last_name']
+        model = UserProfile
+        fields = ['username', 'email', "password"  ]
