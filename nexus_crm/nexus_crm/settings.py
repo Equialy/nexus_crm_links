@@ -47,7 +47,15 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "clients.apps.ClientsConfig",
     'rest_framework',
+    'django_celery_results',
 ]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -147,16 +155,35 @@ MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-
+# Security settings
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
 
 # Login setiings
 LOGOUT_REDIRECT_URL = 'users:index'
 AUTH_USER_MODEL = 'users.UserProfile'
 LOGIN_URL = 'users:login'
 
-# Celery
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
-CELERY_RESULT_BACKEND =  'redis://127.0.0.1:6379'
+# Celery settings
+CELERY_BROKER_URL = str(os.getenv('CELERY_BROKER_URL'))  # Redis как брокер
+CELERY_RESULT_BACKEND = str(os.getenv('CELERY_RESULT_BACKEND')) # Храним результаты задач в базе данных
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = str(os.getenv('CELERY_TASK_SERIALIZER'))
+CELERY_RESULT_SERIALIZER = str(os.getenv('CELERY_RESULT_SERIALIZER'))
+CELERY_TIMEZONE = str(os.getenv('CELERY_TIMEZONE'))
+
+
+# Конфигурация сервера электронной почты
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = str(os.getenv('EMAIL_HOST')),
+EMAIL_HOST_USER =  str(os.getenv('EMAIL_HOST_USER')),
+EMAIL_HOST_PASSWORD =  str(os.getenv('EMAIL_HOST_PASSWORD')),
+EMAIL_PORT =  str(os.getenv('EMAIL_PORT')),
+EMAIL_USE_TLS =  str(os.getenv('EMAIL_USE_TLS')),
+SITE_URL = 'http://127.0.0.1:8000' # Заменить на хост на продакшене
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
