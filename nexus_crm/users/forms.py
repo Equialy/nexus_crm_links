@@ -97,3 +97,32 @@ class ProfileUserForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['username', 'email', "password"  ]
+
+
+class PasswordResetRequestForm(forms.Form):
+    email = forms.EmailField(
+        label="Email",
+        max_length=50,
+        widget=forms.EmailInput(attrs={'class': 'input-register form-control',
+                                       'placeholder': 'Your email'})
+    )
+
+class PasswordResetConfirmForm(forms.Form):
+    new_password1 = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(attrs={'class': 'input-register form-control',
+                                          'placeholder': 'New password'})
+    )
+    new_password2 = forms.CharField(
+        label="Confirm New Password",
+        widget=forms.PasswordInput(attrs={'class': 'input-register form-control',
+                                          'placeholder': 'Confirm new password'})
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password1 = cleaned_data.get('new_password1')
+        new_password2 = cleaned_data.get('new_password2')
+        if new_password1 and new_password2 and new_password1 != new_password2:
+            raise forms.ValidationError("Passwords do not match.")
+        return cleaned_data

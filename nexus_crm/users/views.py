@@ -7,6 +7,7 @@ from django.views.generic import CreateView, UpdateView, TemplateView
 
 from users.forms import SignUpForm, LoginUserForm, ProfileUserForm
 from users.models import UserProfile
+from users.tasks import send_welcome_email
 
 
 class IndexView(TemplateView):
@@ -25,6 +26,7 @@ class SignUpUser(CreateView):
     def form_valid(self, form):
         user = form.save()
         self.object = user
+        send_welcome_email(user.email, "Name")
         login(self.request, user)  # Автоматический вход
         return redirect(self.get_success_url())
 
