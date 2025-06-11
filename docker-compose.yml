@@ -52,6 +52,28 @@ services:
     networks:
       - app_network
 
+  redis:
+    image: redis
+    container_name: redis_container
+    env_file:
+      - .env.docker-compose
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_USER=${REDIS_USER}
+      - REDIS_USER_PASSWORD=${REDIS_USER_PASSWORD}
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - ./redisdata:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "$REDIS_PASSWORD", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - app_network
+
 networks:
   app_network:
     name: app_network
