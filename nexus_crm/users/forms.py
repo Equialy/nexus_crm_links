@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UsernameField, AuthenticationForm
+from django.contrib.auth.forms import UsernameField, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.password_validation import password_validators_help_text_html, validate_password
 from django.utils.translation import gettext_lazy as _
 
@@ -85,9 +85,7 @@ class ProfileUserForm(forms.ModelForm):
     username = forms.CharField(
         label=_("Имя пользователя"),
         max_length=150,
-        help_text=_(
-            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
-        ),
+
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
@@ -96,18 +94,21 @@ class ProfileUserForm(forms.ModelForm):
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
     class Meta:
         model = UserProfile
-        fields = ['username', 'email', "password"  ]
+        fields = ['username', 'email'  ]
 
 
-class PasswordResetRequestForm(forms.Form):
-    email = forms.EmailField(
-        label="Email",
-        max_length=50,
-        widget=forms.EmailInput(attrs={'class': 'input-register form-control',
-                                       'placeholder': 'Your email'})
-    )
+
+
+# class PasswordResetRequestForm(forms.Form):
+#     email = forms.EmailField(
+#         label="Email",
+#         max_length=50,
+#         widget=forms.EmailInput(attrs={'class': 'input-register form-control',
+#                                        'placeholder': 'Your email'})
+#     )
 
 class PasswordResetConfirmForm(forms.Form):
+
     new_password1 = forms.CharField(
         label="New Password",
         widget=forms.PasswordInput(attrs={'class': 'input-register form-control',
@@ -119,6 +120,14 @@ class PasswordResetConfirmForm(forms.Form):
                                           'placeholder': 'Confirm new password'})
     )
 
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if user is None:
+            raise ValueError("PasswordResetConfirmForm requires a `user` argument")
+        self.user = user
+
+
+
     def clean(self):
         cleaned_data = super().clean()
         new_password1 = cleaned_data.get('new_password1')
@@ -126,3 +135,34 @@ class PasswordResetConfirmForm(forms.Form):
         if new_password1 and new_password2 and new_password1 != new_password2:
             raise forms.ValidationError("Passwords do not match.")
         return cleaned_data
+
+    def save(self, commit=True):
+        # если вы хотите здесь сохранять пароль — можно
+        self.user.set_password(self.cleaned_data['new_password1'])
+        if commit:
+            self.user.save()
+        return self.user
+
+
+class UserPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(label='Старый пароль',widget=forms.PasswordInput(attrs={"class": "form-input"}),)
+    new_password1 = forms.CharField(
+        label="Новый пароль",
+        widget=forms.PasswordInput(attrs={"class": "form-input"}),
+
+    )
+    new_password2 = forms.CharField(
+        label=("Повтор нового пароля"),
+
+        widget=forms.PasswordInput(attrs={"class": "form-input"}),
+    )
+
+class PasswordResetRequestForm(forms.Form):
+    email = forms.EmailField(
+        label="Email",
+        max_length=50,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ваш email'
+        })
+    )

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 @shared_task
 def send_welcome_email(email, first_name):
-    subject = render_to_string('emails/welcome_subject.txt')
+    subject = render_to_string('emails/welcome_subject.txt', {"first_name": first_name}).strip()
     message = render_to_string('emails/welcome_message.txt', {'first_name': first_name})
     html_message = render_to_string('emails/welcome_message.html', {'first_name': first_name})
     try:
@@ -38,28 +38,22 @@ def send_password_reset_email(email, user_id):
     try:
         user = UserProfile.objects.get(pk=user_id)
         token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        reset_url = f"{settings.SITE_URL}{reverse('users:password_reset_confirm', kwargs={'uidb64': uid, 'token': token})}"
-        subject = "Password Reset Request"
-        message = f"""
-        Hi {user.first_name or user.email},
+        # uid = urlsafe_base64_encode(force_bytes(user.pk))
+        reset_url = f"{settings.SITE_URL}{reverse('users:password_reset_confirm', kwargs={'user_id': user.pk, 'token': token})}"
+        subject = render_to_string(
+            'emails/password_reset_subject.txt',
+            {'user': user, 'reset_url': reset_url}
+        ).strip()
 
-        Please click the link below to reset your password:
-        {reset_url}
+        message = render_to_string(
+            'emails/password_reset_message.txt',
+            {'user': user, 'reset_url': reset_url}
+        )
 
-        If you did not request this, please ignore this email.
-
-        Best regards,
-        Your Platform Team
-        """
-        html_message = f"""
-        <h1>Password Reset Request</h1>
-        <p>Hi {user.first_name or user.email},</p>
-        <p>Please click the link below to reset your password:</p>
-        <p><a href="{reset_url}">{reset_url}</a></p>
-        <p>If you did not request this, please ignore this email.</p>
-        <p>Best regards,<br>Your Platform Team</p>
-        """
+        html_message = render_to_string(
+            'emails/link_to_reset_password_message.html',
+            {'user': user, 'reset_url': reset_url}
+        )
         send_mail(
             subject,
             message,

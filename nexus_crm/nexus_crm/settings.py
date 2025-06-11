@@ -183,6 +183,7 @@ EMAIL_HOST_USER =  str(os.getenv('EMAIL_HOST_USER'))
 EMAIL_HOST_PASSWORD =  str(os.getenv('EMAIL_HOST_PASSWORD'))
 EMAIL_PORT =  str(os.getenv('EMAIL_PORT'))
 EMAIL_USE_TLS =  str(os.getenv('EMAIL_USE_TLS'))
+DEFAULT_FROM_EMAIL = str(os.getenv('DEFAULT_FROM_EMAIL')) # Email с которого будут отправлятся письма
 SITE_URL = 'http://127.0.0.1:8000' # Заменить на хост на продакшене
 
 # Default primary key field type
