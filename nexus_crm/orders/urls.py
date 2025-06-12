@@ -22,4 +22,6 @@ urlpatterns = [
     path('order/<int:pk>/files/', views.OrderFilesView.as_view(), name='order_files'),
     path('order/<int:order_pk>/files/delete/<int:pk>/', views.OrderFileDeleteView.as_view(), name='order_file_delete'),
 
+    path("service-request-detail/<int:service_request_id>/",views.ServiceRequestDetailView.as_view(),name="service_request_detail"),
+
 ]

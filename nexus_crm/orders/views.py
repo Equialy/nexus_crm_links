@@ -175,3 +175,23 @@ class EditOrderAddressView(LoginRequiredMixin, View):
             order = form.save()
             return redirect('orders:order_card', pk=order.pk)
 
+class ServiceRequestDetailView(View):
+    def get(self, request, service_request_id):
+        service_request = get_object_or_404(
+            Orders, id=service_request_id
+        )
+        if service_request.manager != request.user:
+            return redirect(reverse("crm:dashboard"))
+
+
+        profit = f"{str(service_request.total_price - service_request.cost_price)} ₽"
+
+        context = {
+            "service_request": service_request,
+            "profit": profit,
+        }
+        return render(request, "crm/service_request_detail.html", context)
+
+
+
+
