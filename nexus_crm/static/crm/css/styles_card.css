@@ -572,3 +572,23 @@ body {
 .card:nth-child(3) {
   animation-delay: 0.3s;
 }
+
+.cases-list {
+    margin-top: 20px;
+}
+
+.case-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.case-name {
+    font-weight: bold;
+}
+
+.case-cost {
+    color: #007bff; /* Подстройте цвет под ваш дизайн */
+}

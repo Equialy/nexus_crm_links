@@ -24,4 +24,6 @@ urlpatterns = [
 
     path("service-request-detail/<int:service_request_id>/",views.ServiceRequestDetailView.as_view(),name="service_request_detail"),
 
+    path('order/<int:order_id>/update_cases/',views.OrderCaseCreateView.as_view(),name='update_order_cases'),
+
 ]

@@ -1,13 +1,16 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import TemplateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.http import JsonResponse
+from decimal import Decimal
 
 from clients.forms import ClientForm
 from orders.forms import OrderForm, ServiceForm, OrderFileForm, OrderAddressForm
-from orders.models import Orders, OrderFile
+from orders.models import Orders, OrderFile, OrderCase
 
 
 # Create your views here.
@@ -88,9 +91,14 @@ class OrderDetailCartView(LoginRequiredMixin, DetailView):
     context_object_name = 'order'
 
     def get_context_data(self, **kwargs):
-        """Возвращает форму изменения адреся на странице карточи заявки"""
+        """Возвращает:
+            форму изменения адреся на странице карточи заявки
+            кейсы карточки"""
         context = super().get_context_data(**kwargs)
         context['address_form'] = OrderAddressForm(instance=self.object)
+        context['order_cases'] = self.object.parts.all()
+        context['update_cases_url'] = reverse('orders:update_order_cases', kwargs={'order_id': self.object.id})
+
         return context
 
 
@@ -193,5 +201,42 @@ class ServiceRequestDetailView(View):
         return render(request, "crm/service_request_detail.html", context)
 
 
+from decimal import Decimal, InvalidOperation
 
+@method_decorator(csrf_exempt, name='dispatch')
+class OrderCaseCreateView(LoginRequiredMixin, View):
+    def post(self, request, order_id):
+        order = get_object_or_404(Orders, pk=order_id)
+        OrderCase.objects.filter(cost_price_case=order).delete()
 
+        titles = request.POST.getlist('case_titles[]')
+        costs = request.POST.getlist('case_costs[]')
+        total_price = request.POST.get('total_price')
+
+        total_cost = Decimal('0')
+        for title, cost in zip(titles, costs):
+            if title and cost:  # Check that fields are not empty
+                try:
+                    cost_value = Decimal(cost)
+                    OrderCase.objects.create(
+                        title=title,
+                        cost=cost_value,
+                        cost_price_case=order
+                    )
+                    total_cost += cost_value
+                except (InvalidOperation, ValueError, TypeError):
+                    continue  # Skip invalid cost values
+
+        order.cost_price = total_cost
+        if total_price:
+            try:
+                order.total_price = Decimal(total_price)
+            except (ValueError, TypeError):
+                order.total_price = 0
+        order.save()
+
+        return JsonResponse({
+            'status': 'success',
+            'new_cost_price': float(total_cost),
+            'total_price': float(order.total_price)
+        })

@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="{% static 'crm/css/styles_card.css' %}">
 
     <div class="container">
-        <!-- Заголовок -->
         <header class="order-header">
             <div class="header-info">
                 <div class="order-icon">
@@ -32,9 +31,7 @@
             </a>
         </header>
 
-        <!-- Основная информация -->
         <div class="main-grid">
-            <!-- Клиент -->
             <div class="card">
                 <div class="card-header">
                     <svg class="icon icon-blue" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -87,7 +84,6 @@
                 </div>
             </div>
 
-            <!-- Адрес -->
             <div class="card">
                 <div class="card-header">
                     <svg class="icon icon-green" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -96,11 +92,9 @@
                     </svg>
                     <h3>Адрес</h3>
                 </div>
-                 {% include 'includes/edit_order_address.html' with form=address_form order=order %}
-
+                {% include 'includes/edit_order_address.html' with form=address_form order=order %}
             </div>
 
-            <!-- Услуга -->
             <div class="card">
                 <div class="card-header">
                     <svg class="icon icon-orange" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -114,9 +108,7 @@
             </div>
         </div>
 
-        <!-- Детали и задачи -->
         <div class="details-grid">
-            <!-- Детали заявки -->
             <div class="card">
                 <div class="card-header">
                     <div class="header-left">
@@ -141,7 +133,6 @@
                 </div>
             </div>
 
-            <!-- Задачи -->
             <div class="card">
                 <div class="card-header">
                     <svg class="icon icon-indigo" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -186,7 +177,6 @@
             </div>
         </div>
 
-        <!-- Расчет стоимости -->
         <div class="card">
             <div class="card-header">
                 <svg class="icon icon-emerald" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -198,76 +188,205 @@
                 <h3>Расчет стоимости</h3>
             </div>
             <div class="card-content">
-                <form method="post" action="{% url 'orders:update_order_costs' order.id %}">
-                    {% csrf_token %}
-                    <div class="costs-grid">
-                        <div class="cost-field">
-                            <label for="cost-price">Себестоимость</label>
-                            <div class="input-group">
-                                <input type="number" id="cost-price" name="cost_price" value="{{ order.cost_price|default:0 }}" oninput="calculateProfit()">
-                                <span class="currency">₽</span>
+                <div class="item-list">
+                    <h4>Состав себестоимости</h4>
+                    <div id="items-container">
+                        {% for case in order_cases %}
+                            <div class="case-item">
+                                {{ case.title }} <input type="text" class="case-name" value="{{ case.title }}">
+                                {{ case.cost }} ₽<input type="number" class="case-cost" value="{{ case.cost }}" step="0.01">
+                                <button type="button" class="delete-item">Удалить</button>
                             </div>
-                        </div>
-                        <div class="cost-field">
-                            <label for="total-price">Стоимость</label>
-                            <div class="input-group">
-                                <input type="number" id="total-price" name="total_price" value="{{ order.total_price|default:0 }}" oninput="calculateProfit()">
-                                <span class="currency">₽</span>
+                        {% empty %}
+                            <div class="case-item">
+                                <input type="text" class="case-name" value="Базовая себестоимость">
+                                <input type="number" class="case-cost" value="{{ order.cost_price|default:0 }}" step="0.01">
+                                <button type="button" class="delete-item">Удалить</button>
                             </div>
-                        </div>
-                        <div class="cost-field">
-                            <label for="profit">Прибыль</label>
-                            <div class="input-group">
-                                <input type="number" id="profit" value="{{ order.profit|default:0 }}" readonly>
-                                <span class="currency">₽</span>
-                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-item">Добавить</button>
+                </div>
+                <div class="costs-grid">
+                    <div class="cost-field">
+                        <label for="cost-price">Себестоимость</label>
+                        <div class="input-group">
+                            <input type="number" id="cost-price" value="{{ order.cost_price|default:0 }}" step="0.01" readonly>
+                            <span class="currency">₽</span>
                         </div>
                     </div>
-                    <div class="costs-footer">
-                        <p class="auto-calc-text">Прибыль автоматически рассчитывается при изменении цен</p>
-                        <button type="submit" class="update-btn">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                                <polyline points="17,21 17,13 7,13 7,21"/>
-                                <polyline points="7,3 7,8 15,8"/>
-                            </svg>
-                            Обновить расчет
-                        </button>
+                    <div class="cost-field">
+                        <label for="total-price">Стоимость</label>
+                        <div class="input-group">
+                            <input type="number" id="total-price" value="{{ order.total_price|default:0 }}" step="0.01" oninput="calculateProfit()">
+                            <span class="currency">₽</span>
+                        </div>
                     </div>
-                </form>
+                    <div class="cost-field">
+                        <label for="profit">Прибыль</label>
+                        <div class="input-group">
+                            <input type="number" id="profit" value="{{ order.profit|default:0 }}" step="0.01" readonly>
+                            <span class="currency">₽</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="costs-footer">
+                    <p class="auto-calc-text">Прибыль автоматически рассчитывается при изменении цен</p>
+                    <button type="button" class="update-btn" onclick="updateCostCalculation()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17,21 17,13 7,13 7,21"/>
+                            <polyline points="7,3 7,8 15,8"/>
+                        </svg>
+                        Обновить расчет
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Подключение скриптов -->
-    <script src="{% static 'crm/js/script_card.js' %}"></script>
-
     <script>
-        // Функции для редактирования адреса
-        function editAddress() {
-            document.getElementById('address-display').classList.add('hidden');
-            document.getElementById('address-edit').classList.remove('hidden');
+        const updateCasesUrl = "{{ update_cases_url }}";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('add-item').addEventListener('click', () => {
+                addCaseItem();
+            });
+            updateCostPrice();
+            document.querySelectorAll('.delete-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.parentElement.remove();
+                    updateCostPrice();
+                });
+            });
+            document.querySelectorAll('.case-cost').forEach(input => {
+                input.addEventListener('input', updateCostPrice);
+            });
+        });
+
+        function addCaseItem(title = "", cost = 0) {
+            const container = document.getElementById('items-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'case-item';
+            newItem.innerHTML = `
+                <input type="text" class="case-name" value="${title}" placeholder="Название">
+                <input type="number" class="case-cost" value="${cost}" step="0.01" placeholder="Стоимость">
+                <button type="button" class="delete-item">Удалить</button>
+            `;
+            container.appendChild(newItem);
+
+            newItem.querySelector('.delete-item').addEventListener('click', function() {
+                newItem.remove();
+                updateCostPrice();
+            });
+
+            newItem.querySelector('.case-cost').addEventListener('input', updateCostPrice);
         }
 
-<!--        function cancelEdit() {-->
-<!--            document.getElementById('address-edit').classList.add('hidden');-->
-<!--            document.getElementById('address-display').classList.remove('hidden');-->
-<!--            // Восстановить исходное значение-->
-<!--            document.getElementById('address-input').value = '{{ order.address|default:""|escapejs }}';-->
-<!--        }-->
+        function calculateProfit() {
+            const costPrice = parseFloat(document.getElementById('cost-price').value) || 0;
+            const totalPrice = parseFloat(document.getElementById('total-price').value) || 0;
+            const profit = totalPrice - costPrice;
+            document.getElementById('profit').value = profit.toFixed(2);
+        }
 
-<!--        // Автоматический расчет прибыли-->
-<!--        function calculateProfit() {-->
-<!--            const cost = parseFloat(document.getElementById('cost-price').value) || 0;-->
-<!--            const total = parseFloat(document.getElementById('total-price').value) || 0;-->
-<!--            const profit = total - cost;-->
-<!--            document.getElementById('profit').value = profit;-->
-<!--        }-->
-
-        // Инициализация расчета при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
+        function updateCostPrice() {
+            let total = 0;
+            document.querySelectorAll('.case-cost').forEach(item => {
+                total += parseFloat(item.value) || 0;
+            });
+            document.getElementById('cost-price').value = total.toFixed(2);
             calculateProfit();
-        });
+        }
+
+        async function updateCostCalculation() {
+            const formData = new FormData();
+            const caseTitles = [];
+            const caseCosts = [];
+
+            document.querySelectorAll('.case-item').forEach(item => {
+                const title = item.querySelector('.case-name').value.trim();
+                const cost = item.querySelector('.case-cost').value.trim();
+                if (title && cost && !isNaN(parseFloat(cost))) { // Проверка на валидность
+                    caseTitles.push(title);
+                    caseCosts.push(cost);
+                }
+            });
+
+            // Исправленная отправка массивов
+            for (let i = 0; i < caseTitles.length; i++) {
+                formData.append('case_titles[]', caseTitles[i]);
+                formData.append('case_costs[]', caseCosts[i]);
+            }
+            formData.append('total_price', document.getElementById('total-price').value);
+
+            try {
+                const response = await fetch(updateCasesUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    document.getElementById('cost-price').value = data.new_cost_price;
+                    document.getElementById('total-price').value = data.total_price;
+                    calculateProfit();
+                    showNotification("Кейсы себестоимости и стоимость обновлены", "success");
+                } else {
+                    showNotification("Ошибка при обновлении: " + (data.error || "Неизвестная ошибка"), "error");
+                }
+            } catch (error) {
+                showNotification("Ошибка при отправке данных: " + error.message, "error");
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function showNotification(message, type = "success") {
+            const notification = document.createElement("div");
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            `;
+            notification.style.background = type === "success" ? "var(--primary-green)" : "#ef4444";
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.transform = "translateX(0)";
+            }, 100);
+            setTimeout(() => {
+                notification.style.transform = "translateX(100%)";
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
     </script>
 
 {% endblock %}

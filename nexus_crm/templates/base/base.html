@@ -14,7 +14,7 @@
 
 
 </head>
-<body>
+<body >
 
  {% include 'includes/navbar.html' with item=item active_path=active_path %}
 {% if messages %}
@@ -29,6 +29,7 @@
 {% endif %}
 
 {% block content %} {% endblock %}
+
 <!-- Bootstrap Bundle JS (с Popper.js внутри) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
