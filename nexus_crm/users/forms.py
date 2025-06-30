@@ -1,15 +1,13 @@
 from django import forms
-from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UsernameField, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.password_validation import password_validators_help_text_html, validate_password
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-
+from django.forms.widgets import ClearableFileInput
 from users.models import UserProfile
 
 
 class SignUpForm(forms.ModelForm):
-
     username = forms.CharField(
         label=_("Имя пользователя"),
         max_length=150,
@@ -18,7 +16,6 @@ class SignUpForm(forms.ModelForm):
 
     email = forms.EmailField(label=_("Email address"),
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
-
 
     password1 = forms.CharField(
         label=_("Password"),
@@ -34,6 +31,7 @@ class SignUpForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
         help_text=_("Enter the same password as before, for verification."),
     )
+
     class Meta:
         model = UserProfile
         fields = ['username', 'email', 'phone_number']
@@ -90,14 +88,15 @@ class ProfileUserForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
-
     email = forms.EmailField(label=_("Email address"),
-                             widget=forms.TextInput(attrs={'class': 'form-control'}))
-
+                             widget=forms.TextInput(attrs={'class': 'form-control'}), )
+    photo = forms.ImageField(
+        required=False,
+        widget=ClearableFileInput(attrs={'accept': 'image/*', 'id': 'id_photo'} ))
 
     class Meta:
         model = UserProfile
-        fields = ['username', 'email' , 'photo', ]
+        fields = ['username', 'email', 'photo', ]
 
     def clean_photo(self):
         photo = self.cleaned_data.get('photo')
@@ -109,8 +108,6 @@ class ProfileUserForm(forms.ModelForm):
         return photo
 
 
-
-
 # class PasswordResetRequestForm(forms.Form):
 #     email = forms.EmailField(
 #         label="Email",
@@ -120,7 +117,6 @@ class ProfileUserForm(forms.ModelForm):
 #     )
 
 class PasswordResetConfirmForm(forms.Form):
-
     new_password1 = forms.CharField(
         label="New Password",
         widget=forms.PasswordInput(attrs={'class': 'input-register form-control',
@@ -137,8 +133,6 @@ class PasswordResetConfirmForm(forms.Form):
         if user is None:
             raise ValueError("PasswordResetConfirmForm requires a `user` argument")
         self.user = user
-
-
 
     def clean(self):
         cleaned_data = super().clean()
@@ -157,7 +151,7 @@ class PasswordResetConfirmForm(forms.Form):
 
 
 class UserPasswordChangeForm(PasswordChangeForm):
-    old_password = forms.CharField(label='Старый пароль',widget=forms.PasswordInput(attrs={"class": "form-input"}),)
+    old_password = forms.CharField(label='Старый пароль', widget=forms.PasswordInput(attrs={"class": "form-input"}), )
     new_password1 = forms.CharField(
         label="Новый пароль",
         widget=forms.PasswordInput(attrs={"class": "form-input"}),
@@ -168,6 +162,7 @@ class UserPasswordChangeForm(PasswordChangeForm):
 
         widget=forms.PasswordInput(attrs={"class": "form-input"}),
     )
+
 
 class PasswordResetRequestForm(forms.Form):
     email = forms.EmailField(

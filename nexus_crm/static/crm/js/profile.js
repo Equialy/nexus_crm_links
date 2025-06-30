@@ -1,4 +1,4 @@
-<script>
+
 document.addEventListener('DOMContentLoaded', function() {
   const input = document.getElementById('id_photo');
   const preview = document.querySelector('.profile-image');
@@ -11,4 +11,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
-</script>

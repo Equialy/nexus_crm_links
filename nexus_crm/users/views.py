@@ -53,7 +53,6 @@ class LoginUser(LoginView):
     def form_valid(self, form):
         return super().form_valid(form)
 
-
 class ProfileUser(LoginRequiredMixin, UpdateView):
     model = UserProfile
     form_class = ProfileUserForm

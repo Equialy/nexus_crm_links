@@ -1,0 +1,17 @@
+{# templates/users/widgets/custom_clearable_file_input.html #}
+
+
+{% if widget.is_initial %}
+  <div class="current-file">
+    <a href="{{ widget.value.url }}" target="_blank">Просмотреть фото</a>
+  </div>
+{% endif %}
+<div class="upload-parts">
+  {{ widget.input_text }}: {{ widget.input }}
+  {% if widget.is_initial and not widget.required %}
+    <label class="clear-file">
+      {{ widget.clear_checkbox }} {{ widget.clear_checkbox_label }}
+    </label>
+  {% endif %}
+</div>
+

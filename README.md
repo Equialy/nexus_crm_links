@@ -164,18 +164,19 @@ my_crm/
 │   │   ├── views.py
 │   │   └── ...
 │   ├── templates/                 # Настройки Django
-│   │   ├── base.py
+│   │   ├── base
 │   │   │      ├── base.html
 │   │   │      └── dashboard.html
-│   │   ├── includes.py
+│   │   ├── includes
 │   │   │      ├── client_add_form.html.html
 │   │   │      ├── navbar.html
 │   │   │      ├── service_add_form.html
 │   │   │      └── edit_order_address.html
-│   │   ├── orders.py
+│   │   ├── orders
 │   │   │      ├── order_blank.html
 │   │   │      └── ...
-│   │   ├── users.py
+│   │   ├── users
+│   │   │      ├── widgets /
 │   │   │      ├── login.html
 │   │   │      └── ...
 │   │   └── ...
