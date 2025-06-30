@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_cleanup.apps.CleanupConfig',
+
     "crm.apps.CrmConfig",
     "orders.apps.OrdersConfig",
     "users.apps.UsersConfig",

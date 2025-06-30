@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UsernameField, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.password_validation import password_validators_help_text_html, validate_password
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from users.models import UserProfile
@@ -92,9 +93,20 @@ class ProfileUserForm(forms.ModelForm):
 
     email = forms.EmailField(label=_("Email address"),
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+
     class Meta:
         model = UserProfile
-        fields = ['username', 'email'  ]
+        fields = ['username', 'email' , 'photo', ]
+
+    def clean_photo(self):
+        photo = self.cleaned_data.get('photo')
+        if photo:
+            if photo.size > 2 * 1024 * 1024:
+                raise ValidationError("Максимальный размер фото — 2MB")
+            if not photo.content_type.startswith('image/'):
+                raise ValidationError("Загружать можно только изображения")
+        return photo
 
 
 

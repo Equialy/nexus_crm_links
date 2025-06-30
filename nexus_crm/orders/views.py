@@ -23,14 +23,13 @@ class DashBoard(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         # все активные заявки:
-        ctx['active_requests'] = Orders.objects.active()
+        ctx['active_requests'] = Orders.objects.active_for_manager(manager=self.request.user)
         # только ваши:
-        ctx['my_requests'] = Orders.objects.by_manager(self.request.user)
+        ctx['my_requests'] = Orders.objects.by_manager(manager=self.request.user)
         return ctx
 
 
 class DashBoardAddOrderView(LoginRequiredMixin, View):
-    # {% url 'tasks:my_tasks' %}\
     template_name = 'orders/order_blank.html'
     success_url = reverse_lazy('orders:dashboard')
 

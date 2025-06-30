@@ -14,6 +14,12 @@ class UserProfile(AbstractBaseUser):
                                    blank=True, null=True,
                                    default=None, unique=True)
     email = models.EmailField(max_length=255, unique=True)
+    photo = models.ImageField(
+        upload_to='profile_photos/',
+        verbose_name='Фото профиля',
+        blank=True,
+        null=True,
+    )
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=True)

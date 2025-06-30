@@ -9,9 +9,18 @@ class OrdersManager(models.Manager):
         """Все заявки в работе."""
         return self.get_queryset().filter(status='in_progress')
 
-    def by_manager(self, user):
+    def by_manager(self, manager: str):
         """Заявки, назначенные конкретному менеджеру."""
-        return self.get_queryset().filter(manager=user)
+        return self.get_queryset().filter(manager=manager)
+
+    def active_for_manager(self, manager: str):
+        """
+        Все активные заявки для конкретного менеджера.
+        """
+        return self.get_queryset().filter(
+            status='in_progress',
+            manager=manager
+        )
 
     def create_order(self, *, manager, address='', description, cost_price=0, total_price=0):
         """
