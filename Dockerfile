@@ -19,10 +19,11 @@ RUN apt-get update && apt-get install -y \
 
 
 RUN pip install --no-cache-dir -r requirements.txt
+RUN chmod +x /usr/src/app/entrypoint.sh
 
 COPY . .
 
 WORKDIR /app/nexus_crm
 
-
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
 CMD ["sh", "-c", "python manage.py migrate && gunicorn nexus_crm.wsgi:application --bind 0.0.0.0:8000"]

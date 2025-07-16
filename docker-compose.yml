@@ -1,22 +1,23 @@
 services:
 
-  nexus_app:
-    build: .
-    container_name: nexus_app_container
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env.docker-compose
-    volumes:
-      - .:/app
-      - static:/app/nexus_crm/staticfiles
-      - media:/app/nexus_crm/media
-    depends_on:
-      postgres:
-        condition: service_healthy
-    command: sh -c "python manage.py migrate && gunicorn nexus_crm.wsgi:application --bind 0.0.0.0:8000"
-    networks:
-      - nexus_network
+#  nexus_app:
+#    build: .
+#    container_name: nexus_app_container
+#
+#    ports:
+#      - "8000:8000"
+#    env_file:
+#      - .env.docker-compose
+#    volumes:
+#      - .:/app
+#      - static:/app/nexus_crm/staticfiles
+#      - media:/app/nexus_crm/media
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#    command: sh -c "python manage.py migrate && gunicorn nexus_crm.wsgi:application --bind 0.0.0.0:8000"
+#    networks:
+#      - nexus_network
 
   postgres:
     image: postgres:17
@@ -72,22 +73,23 @@ services:
     networks:
       - nexus_network
 
-  nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    container_name: nginx_nexus_app
+#  nginx:
+#    build:
+#      context: ./nginx
+#      dockerfile: Dockerfile
+#    container_name: nginx_nexus_app
 #    volumes:
-#      - ./certbot/conf:/etc/letsencrypt
-#      - ./certbot/www:/var/www/certbot
-    depends_on:
-      - nexus_app
-    ports:
-      - "80:80"
-      - 443:443
-
-    networks:
-      - nexus_network
+#      - static:/app/nexus_crm/staticfiles
+#      - media:/app/nexus_crm/media
+##      - ./certbot/conf:/etc/letsencrypt
+##      - ./certbot/www:/var/www/certbot
+#    depends_on:
+#      - nexus_app
+#    ports:
+#      - "80:80"
+#      - 443:443
+#    networks:
+#      - nexus_network
 
   maildev:
     image: maildev/maildev
@@ -136,6 +138,23 @@ services:
     restart: unless-stopped
     networks:
       - nexus_network
+
+#  celery:
+#    build: .
+#    container_name: celery_nexus_app
+#    command: celery -A nexus_crm worker --pool=solo --loglevel=info
+#    env_file:
+#      - .env.docker-compose
+#    volumes:
+#      - .:/app
+#      - static:/app/nexus_crm/staticfiles
+#      - media:/app/nexus_crm/media
+#    depends_on:
+#      - nexus_app
+#      - redis
+#      - postgres
+#    networks:
+#      - nexus_network
 
 networks:
   nexus_network:

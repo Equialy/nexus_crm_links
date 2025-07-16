@@ -1,4 +1,4 @@
-<script>
+
 document.getElementById('edit-address-form').addEventListener('submit', async function(event) {
     event.preventDefault();
     const form = event.target;
@@ -22,4 +22,4 @@ document.getElementById('edit-address-form').addEventListener('submit', async fu
         alert(`Ошибка: ${JSON.stringify(errorData.errors)}`);
     }
 });
-</script>
+

@@ -27,7 +27,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv(str("SECRET_KEY"))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = str(os.getenv('DEBUG_DJANGO'))
+# DEBUG = str(os.getenv('DEBUG_DJANGO'))
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -156,7 +157,7 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Security settings
@@ -213,3 +214,7 @@ SPECTACULAR_SETTINGS = {
         'persistAuthorization': True,
     },
 }
+
+if DEBUG:
+    import django.contrib.staticfiles.urls
+    from django.conf.urls.static import static

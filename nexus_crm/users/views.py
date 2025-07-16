@@ -26,7 +26,7 @@ class IndexView(TemplateView):
 class SignUpUser(CreateView):
     model = UserProfile
     form_class = SignUpForm
-    success_url = reverse_lazy('users:index')
+    success_url = reverse_lazy('orders:dashboard')
     template_name = 'users/registration.html'
     extra_context = {'title': 'Регистрация'}
     success_message = "Регистрация прошла успешно!"
