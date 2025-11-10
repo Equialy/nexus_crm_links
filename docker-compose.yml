@@ -1,23 +1,23 @@
 services:
 
-#  nexus_app:
-#    build: .
-#    container_name: nexus_app_container
-#
-#    ports:
-#      - "8000:8000"
-#    env_file:
-#      - .env.docker-compose
-#    volumes:
-#      - .:/app
-#      - static:/app/nexus_crm/staticfiles
-#      - media:/app/nexus_crm/media
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#    command: sh -c "python manage.py migrate && gunicorn nexus_crm.wsgi:application --bind 0.0.0.0:8000"
-#    networks:
-#      - nexus_network
+  nexus_app:
+    build: .
+    container_name: nexus_app_container
+
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.docker-compose
+    volumes:
+      - .:/app
+      - static:/app/nexus_crm/staticfiles
+      - media:/app/nexus_crm/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "python manage.py migrate && gunicorn nexus_crm.wsgi:application --bind 0.0.0.0:8000"
+    networks:
+      - nexus_network
 
   postgres:
     image: postgres:17
