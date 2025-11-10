@@ -85,7 +85,7 @@ services:
       nexus_app:
         condition: service_started # Nginx зависит от nexus_app
     networks:
-      - app_network
+      - nexus_network
     restart: unless-stopped
 
   maildev:
