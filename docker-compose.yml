@@ -84,6 +84,8 @@ services:
     depends_on:
       nexus_app:
         condition: service_started # Nginx зависит от nexus_app
+    volumes:
+      - /var/www/certbot:/var/www/certbot:ro
     networks:
       - nexus_network
     restart: unless-stopped
